@@ -23,10 +23,10 @@ search_by_maker = st.sidebar.selectbox("Search by Maker", list_maker)
 # search_by_model= st.sidebar.selectbox("Search by Model",voiture.find({"Make":i},{"Model:1","_id:0"}))
 
 if  search_by_maker:
-    search_by_model = st.sidebar.selectbox("Search by Model",voiture.distinct('Model',{"Make":search_by_maker}))
+    search_by_model = st.sidebar.selectbox("Search by Model",voiture.distinct('Model',{"Make":search_by_maker})) #!根据选择的Make显示相应的model并且不会重复显示
 
 #affire les informations de voiture
-    def show_infor(voiture):     
+    def show_infor(voiture):     #!通过函数建立一种显示模型
         return f"La {voiture['Make']} {voiture['Model']} {voiture['Vehicle Style']} de {voiture['Year']} a {voiture['Engine HP']} chevaux et {voiture['Engine Cylinders']} cylindres. Sa consommation sur autoroute est de {voiture['highway km/litre']} km au litre et de {voiture['city km/litre']} km au litre en ville."
     display_result = [show_infor(voiture) for voiture in voiture.find({'Make': search_by_maker, 'Model': search_by_model})]
     for i in display_result:
@@ -81,9 +81,9 @@ st.title("write all of the informations for your new car " )
 form = st.form(key='my_form')
 car_maker = form.text_input("Make:")
 car_model = form.text_input("Model:")
-car_year = form.number_input("Year:")
-car_ehp = form.number_input("Engine HP:")
-car_ec = form.number_input("Engine Cylinders:")
+car_year = form.number_input("Year:",min_value=1900, max_value=2022, step=1)
+car_ehp = form.number_input("Engine HP:",min_value=1, max_value=1200, step=1)
+car_ec = form.number_input("Engine Cylinders:",min_value=1, max_value=16, step=1)
 submit_button = form.form_submit_button(label='Submit')
 if submit_button:
         new_car = {
@@ -93,7 +93,7 @@ if submit_button:
             'Engine HP': car_ehp,
             'Engine Cylinders':car_ec
         }
-        voiture.insert(new_car)
+        voiture.insert_one(new_car)
         st.write("### your new car is add")
 a = voiture.find({'Make':'goose'})
 for i in a:
